@@ -1,141 +1,147 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 
 export default function Accueil() {
-  const userInfo = {
+  const user = {
     name: "John Doe",
     age: 30,
     weight: 85,
-    height: 1.75,
+    height: 1.78,
     currentSugarLevel: 1.2,
     monthlySugarLevels: [1.1, 1.2, 1.3, 1.1, 1.0, 0.9],
   };
 
-  const averageSugarLevel =
-    userInfo.monthlySugarLevels.reduce((acc, curr) => acc + curr, 0) /
-    userInfo.monthlySugarLevels.length;
+  const averageSugar = user.monthlySugarLevels.reduce((a, b) => a + b, 0) / user.monthlySugarLevels.length;
 
-  const imc = userInfo.weight / (userInfo.height * userInfo.height);
-  const imcStatus =
-    imc < 18.5
-      ? "Insuffisance pondérale"
-      : imc < 25
-      ? "IMC normal"
-      : imc < 30
-      ? "Surpoids"
-      : "Obésité";
+  const bmi = user.weight / (user.height * user.height);
+  const bmiStatus =
+    bmi < 18.5 ? 'Insuffisance pondérale' :
+    bmi < 25 ? 'Poids normal' :
+    bmi < 30 ? 'Surpoids' : 'Obésité';
+  const bmiColor =
+    bmi < 18.5 ? '#00bfff' :
+    bmi < 25 ? '#32cd32' :
+    bmi < 30 ? '#ffa500' : '#ff4500';
 
   return (
-    <View style={styles.container}>
-      {/* Carte profil */}
-      <View style={styles.profileCard}>
-        <Image
-          source={require('@/assets/images/icon.png')}
-          style={styles.profileImage}
-        />
-        <View>
-          <Text style={styles.name}>{userInfo.name}</Text>
-          <Text style={styles.detail}>Âge: {userInfo.age}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Ligne du haut : Photo + Nom */}
+      <View style={styles.topRow}>
+        <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
+        <View style={styles.userCard}>
+          <Text style={styles.userName}>{user.name}</Text>
+          <Text style={styles.userAge}>Âge : {user.age}</Text>
         </View>
       </View>
 
-      {/* Image corps humain au centre */}
-      <View style={styles.bodyContainer}>
-        <Image
-          source={require('@/assets/images/corphumain.png')}
-          style={styles.bodyImage}
-          resizeMode="contain"
-        />
+      {/* Image du corps humain */}
+      <Image source={require('@/assets/images/corphumain.png')} style={styles.bodyImage} resizeMode="contain" />
 
-        {/* Infos autour */}
-        <View style={styles.infoBoxTopRight}>
-          <Text style={styles.infoText}>Taille: {userInfo.height} m</Text>
-          <Text style={styles.infoText}>Sucre actuel: {userInfo.currentSugarLevel} g/L</Text>
+      {/* Infos */}
+      <View style={styles.infoGrid}>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoLabel}>Taille</Text>
+          <Text style={styles.infoValue}>{user.height} m</Text>
         </View>
-
-        <View style={styles.infoBoxBottomLeft}>
-          <Text style={styles.infoText}>Moyenne sucre: {averageSugarLevel.toFixed(2)} g/L</Text>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoLabel}>Taux de sucre</Text>
+          <Text style={styles.infoValue}>{user.currentSugarLevel} g/L</Text>
         </View>
-
-        {/* Poids avec IMC */}
-        <View style={styles.infoBoxBottom}>
-          <Text style={styles.infoText}>
-            Poids: {userInfo.weight} kg ({imcStatus})
-          </Text>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoLabel}>Moyenne mensuelle</Text>
+          <Text style={styles.infoValue}>{averageSugar.toFixed(2)} g/L</Text>
+        </View>
+        <View style={[styles.bmiBox, { backgroundColor: bmiColor }]}>
+          <Text style={styles.bmiText}>IMC: {bmi.toFixed(1)}</Text>
+          <Text style={styles.bmiStatus}>{bmiStatus}</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
-    backgroundColor: '#f0f8ff',
+    backgroundColor: '#f8f9fa',
+    alignItems: 'center',
   },
-  profileCard: {
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 10,
-    elevation: 3,
-    marginBottom: 10,
-    width: '75%',
+    marginBottom: 20,
+    gap: 15,
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 10,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: '#ccc',
   },
-  name: {
-    fontSize: 20,
+  userCard: {
+    backgroundColor: '#ffffff',
+    padding: 10,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  userName: {
+    fontSize: 18,
     fontWeight: 'bold',
   },
-  detail: {
+  userAge: {
     fontSize: 16,
-    color: '#666',
-  },
-  bodyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
+    color: '#555',
   },
   bodyImage: {
-    width: 220,
-    height: 320,
+    width: '100%',
+    height: 300,
+    marginVertical: 20,
   },
-  infoBoxTopRight: {
-    position: 'absolute',
-    top: 30,
-    right: 10,
-    backgroundColor: '#e6f2ff',
+  infoGrid: {
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    gap: 10,
+  },
+  infoBox: {
+    backgroundColor: '#e3f2fd',
     padding: 10,
-    borderRadius: 10,
-    elevation: 2,
+    borderRadius: 8,
+    minWidth: '40%',
+    alignItems: 'center',
   },
-  infoBoxBottomLeft: {
-    position: 'absolute',
-    bottom: 60,
-    left: 10,
-    backgroundColor: '#fff0f5',
+  infoLabel: {
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  infoValue: {
+    fontSize: 16,
+  },
+  bmiBox: {
+    marginTop: 10,
+    borderRadius: 8,
     padding: 10,
-    borderRadius: 10,
-    elevation: 2,
+    minWidth: '90%',
+    alignItems: 'center',
   },
-  infoBoxBottom: {
-    position: 'absolute',
-    bottom: 10,
-    backgroundColor: '#f5fffa',
-    padding: 10,
-    borderRadius: 10,
-    elevation: 2,
+  bmiText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
   },
-  infoText: {
-    fontSize: 14,
-    color: '#333',
+  bmiStatus: {
+    fontSize: 16,
+    color: '#fff',
   },
 });
